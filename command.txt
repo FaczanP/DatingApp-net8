@@ -2,3 +2,7 @@ dotnet tool list -g  list which packages are installed
 nuget.org => choose the propper version and install
 dotnet ef migrations add InitialCreate -o Data/Migrations create migration in a specified folder
 dotnet ef database update create a database
+
+npm install ngx-bootstrap@12 bootstrap font-awesome install stuff to client (angular version 17)
+
+
