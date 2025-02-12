@@ -7,7 +7,7 @@ import { Photo } from '../_models/photo';
 import { PaginatedResult } from '../_models/pagination';
 import { UserParams } from '../_models/userParams';
 import { AccountService } from './account.service';
-import { setPaginatedResponse, setPaginationHeader } from './paginationHelper';
+import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';
 // import { AccountService } from './account.service';
 
 @Injectable({
@@ -34,7 +34,7 @@ export class MembersService {
 
   if(response) return setPaginatedResponse(response, this.paginatedResult);
 
-  let params = setPaginationHeader(this.userParams().pageNumber, this.userParams().pageSize);
+  let params = setPaginationHeaders(this.userParams().pageNumber, this.userParams().pageSize);
 
   params = params.append('minAge', this.userParams().minAge);
   params = params.append('maxAge', this.userParams().maxAge);

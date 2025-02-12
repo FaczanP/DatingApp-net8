@@ -11,7 +11,7 @@ export function setPaginatedResponse<T>(response: HttpResponse<T>,
     })
 }
 
-export function setPaginationHeader(pageNumber: number, pageSize: number) {
+export function setPaginationHeaders(pageNumber: number, pageSize: number) {
     let params = new HttpParams();
 
     if (pageNumber && pageSize) {
