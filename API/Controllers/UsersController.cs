@@ -13,6 +13,7 @@ namespace API.Controllers;
 [Authorize]
 public class UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService) : BaseApiController
 {
+    // [Authorize(Roles = "Admin")] test in section 16
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams){
         userParams.CurrentUsername = User.GetUserName();
@@ -22,7 +23,7 @@ public class UsersController(IUserRepository userRepository, IMapper mapper, IPh
 
         return Ok(users);
     }
-    
+    // [Authorize(Roles = "Member")] test in section 16
     [HttpGet("{username}")] // /api/users/2
     public async Task<ActionResult<MemberDto>> GetUser(string username){
         var user = await userRepository.GetMemberAsync(username);
