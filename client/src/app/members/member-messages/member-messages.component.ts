@@ -14,30 +14,34 @@ import { FormsModule, NgForm } from '@angular/forms';
 })
 export class MemberMessagesComponent {
   @ViewChild('messageForm') messageForm?: NgForm;
-  private messageService = inject(MessageService);
+  messageService = inject(MessageService);
   username = input.required<string>();
-  messages = input.required<Message[]>();
+  // messages = input.required<Message[]>(); section 17
   messageContent = '';
-  updateMessage = output<Message>();
+  // updateMessage = output<Message>(); section 17
 
- sendMessage(){
-  this.messageService.sendMessage(this.username(), this.messageContent).subscribe({
-    next: message => {
-      this.updateMessage.emit(message);
+  sendMessage() {
+    this.messageService.sendMessage(this.username(), this.messageContent).then(() => {
       this.messageForm?.reset();
-    }
-  })
- }
- 
- 
-  // ngOnInit(): void {
-  //     this.loadMessages(); section 15
-  // }
+    })
 
-  // loadMessages(){
-  //   this.messageService.getMessageThread(this.username()).subscribe({
-  //     next: messages => this.messages = messages
-  //   })
-  // } section 15
+
+    // .subscribe({next: message => {
+    //   this.messageForm?.reset();
+    // this.updateMessage.emit(message);   }) section 17      
+  }
 
 }
+
+
+// ngOnInit(): void {
+//     this.loadMessages(); section 15
+// }
+
+// loadMessages(){
+//   this.messageService.getMessageThread(this.username()).subscribe({
+//     next: messages => this.messages = messages
+//   })
+// } section 15
+
+
