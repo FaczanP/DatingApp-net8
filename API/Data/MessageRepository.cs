@@ -70,26 +70,29 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
 
     public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
     {
-        var messages = await context.Messages
+        var query = context.Messages
         .Where(x => x.RecipientUsername == currentUsername && x.RecipientDeleted == false && x.SenderUsername == recipientUsername ||
         x.SenderUsername == currentUsername && x.SenderDeleted == false && x.RecipientUsername == recipientUsername)
         .OrderBy(x => x.MessageSent)
-        .ProjectTo<MessageDto>(mapper.ConfigurationProvider)
-        .ToListAsync();
+        .AsQueryable();
+        
+        
+        // .ProjectTo<MessageDto>(mapper.ConfigurationProvider)
+        // .ToListAsync(); section 18
 
         // .Include(x => x.Sender).ThenInclude(x => x.Photos)
         // .Include(x => x.Recipient).ThenInclude(x => x.Photos) section 17
 
-        var unreadMessages = messages.Where(x => x.DateRead == null &&
+        var unreadMessages = query.Where(x => x.DateRead == null &&
         x.RecipientUsername == currentUsername).ToList();
 
         if (unreadMessages.Count != 0)
         {
             unreadMessages.ForEach(x => x.DateRead = DateTime.UtcNow);
-            await context.SaveChangesAsync();
+            // await context.SaveChangesAsync(); section 18
         }
 
-        return messages;
+        return await query.ProjectTo<MessageDto>(mapper.ConfigurationProvider).ToListAsync();
         // mapper.Map<IEnumerable<MessageDto>>(messages); section 17
     }
 
@@ -98,8 +101,8 @@ public class MessageRepository(DataContext context, IMapper mapper) : IMessageRe
         context.Connections.Remove(connection);
     }
 
-    public async Task<bool> SaveAllAsync()
-    {
-        return await context.SaveChangesAsync() > 0;
-    }
+    // public async Task<bool> SaveAllAsync()
+    // {
+    //     return await context.SaveChangesAsync() > 0;
+    // } section 18
 }
