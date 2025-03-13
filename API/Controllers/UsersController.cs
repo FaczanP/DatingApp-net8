@@ -26,7 +26,10 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoServi
     // [Authorize(Roles = "Member")] test in section 16
     [HttpGet("{username}")] // /api/users/2
     public async Task<ActionResult<MemberDto>> GetUser(string username){
-        var user = await unitOfWork.UserRepository.GetMemberAsync(username);
+
+        var currentUsername = User.GetUserName();
+
+        var user = await unitOfWork.UserRepository.GetMemberAsync(username, isCurrentUser: currentUsername == username);
         if(user == null) return NotFound();
 
         return user;
@@ -69,7 +72,7 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoServi
             IsMain = false
         };
 
-        if(user.Photos.Count == 0) photo.IsMain = true;
+        // if(user.Photos.Count == 0) photo.IsMain = true;
 
         user.Photos.Add(photo);
 
@@ -86,7 +89,7 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoServi
 
         var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 
-        if(photo == null || photo.IsMain) return BadRequest("Cannot use this as main photo");
+        if(photo == null || photo.IsMain || !photo.IsApproved) return BadRequest("Cannot use this as main photo");
 
         var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
         if(currentMain != null) currentMain.IsMain = false;
@@ -103,7 +106,7 @@ public class UsersController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoServi
 
         if(user == null) return BadRequest("User not found");
 
-        var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+        var photo = await unitOfWork.PhotoRepository.GetPhotoById(photoId);
 
         if(photo == null || photo.IsMain) return BadRequest("This photo cannot be deleted");
 

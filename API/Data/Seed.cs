@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using API.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +30,11 @@ public class Seed
         }
 
         foreach(var user in users){
+             if (user.Photos != null)
+                {
+                    user.Photos.First().IsApproved = true;
+                }
+            
             // using var hmac = new HMACSHA512(); section 16
 
             // user.UserName = user.UserName.ToLower();
@@ -39,8 +42,8 @@ public class Seed
             // user.PasswordSalt = hmac.Key; section 16
 
             // context.Users.Add(user); section 16
-
-            user.UserName = user.UserName! .ToLower();
+            
+            user.UserName = user.UserName!.ToLower();
             await userManager.CreateAsync(user, "Pa$$w0rd");
             await userManager.AddToRoleAsync(user, "Member");
         }
